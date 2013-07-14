@@ -5,6 +5,7 @@ from urlparse import urljoin
 
 from django.http import get_host, HttpResponseRedirect, HttpResponseForbidden, HttpResponse
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django_cas.models import PgtIOU
 
@@ -74,7 +75,7 @@ def login(request, next_page=None, required=False):
         next_page = _redirect_url(request)
     if request.user.is_authenticated():
         message = "You are logged in as %s." % request.user.username
-        request.user.message_set.create(message=message)
+        messages.success(request, message)
         return HttpResponseRedirect(next_page)
     ticket = request.GET.get('ticket')
     service = _service_url(request, next_page)
@@ -86,7 +87,7 @@ def login(request, next_page=None, required=False):
             auth.login(request, user)
             name = user.first_name or user.username
             message = "Login succeeded. Welcome, %s." % name
-            user.message_set.create(message=message)
+            messages.success(request, message)
             return HttpResponseRedirect(next_page)
         elif settings.CAS_RETRY_LOGIN or required:
             return HttpResponseRedirect(_login_url(service, ticket))
