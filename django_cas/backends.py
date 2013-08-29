@@ -131,8 +131,10 @@ class CASBackend(object):
         if not username:
             return None
 
-        user, created = User.objects.get_or_create(username=username)
-        if created:
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            user = User(username=username, email=username)
             user.set_unusable_password()
 
         if authentication_response and _CAS_USER_DETAILS_RESOLVER:
