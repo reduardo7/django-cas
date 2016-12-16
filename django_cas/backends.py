@@ -1,7 +1,9 @@
 """CAS authentication backend"""
 
 import urllib
+import requests
 from urlparse import urljoin
+from time import sleep
 
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
@@ -21,6 +23,10 @@ def _verify_cas1(ticket, service):
     params = {'ticket': ticket, 'service': service}
     url = (urljoin(settings.CAS_SERVER_URL, 'validate') + '?' +
            urlencode(params))
+
+    url = url.replace(r":8443", ":8443/ca-cas")
+    print('************django_cas - url', url)
+
     page = urlopen(url)
     try:
         verified = page.readline().strip()
@@ -48,13 +54,18 @@ def _verify_cas2(ticket, service):
     else:
         params = {'ticket': ticket, 'service': service}
 
-    url = (urljoin(settings.CAS_SERVER_URL, 'proxyValidate') + '?' +
+    url = (urljoin(settings.CAS_SERVER_URL, 'serviceValidate') + '?' +
            urllib.urlencode(params))
 
-    page = urllib.urlopen(url)
-    response = page.read()
+    #url = https://local.connectamericas.com:8443/proxyValidate?ticket=ST-6-r3LM7Mpe1iEDtjHH4eDE-local.connectamericas.com&service=http%3A%2F%2Flocal.connectamericas.com%3A8000%2F
+    url = url.replace(r":8443", ":8443/ca-cas")
+    print('*** > django_cas > url', url)
+
+    page = requests.post(url,
+                         data='',
+                         headers={'Content-Type': 'application/x-www-form-urlencoded'})
+    response = page.text
     tree = ElementTree.fromstring(response)
-    page.close()
 
     if tree.find(CAS + 'authenticationSuccess') is not None:
         username = tree.find(CAS + 'authenticationSuccess/' + CAS + 'user').text
@@ -89,8 +100,11 @@ def verify_proxy_ticket(ticket, service):
 
     params = {'ticket': ticket, 'service': service}
 
-    url = (urljoin(settings.CAS_SERVER_URL, 'proxyValidate') + '?' +
+    url = (urljoin(settings.CAS_SERVER_URL, 'serviceValidate') + '?' +
            urlencode(params))
+
+    url = url.replace(r":8443", ":8443/ca-cas")
+    print('************django_cas - url', url)
 
     page = urlopen(url)
 
