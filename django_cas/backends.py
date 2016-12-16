@@ -21,6 +21,10 @@ def _verify_cas1(ticket, service):
     params = {'ticket': ticket, 'service': service}
     url = (urljoin(settings.CAS_SERVER_URL, 'validate') + '?' +
            urllib.urlencode(params))
+
+    url = url.replace(r":8443", ":8443/ca-cas")
+    print('*** > django_cas > url', url)
+
     page = urllib.urlopen(url, data='')
     try:
         verified = page.readline().strip()
@@ -50,6 +54,9 @@ def _verify_cas2(ticket, service):
 
     url = (urljoin(settings.CAS_SERVER_URL, 'serviceValidate') + '?' +
            urllib.urlencode(params))
+
+    url = url.replace(r":8443", ":8443/ca-cas")
+    print('*** > django_cas > url', url)
 
     page = urllib.urlopen(url, data='')
     response = page.read()
@@ -91,6 +98,9 @@ def verify_proxy_ticket(ticket, service):
 
     url = (urljoin(settings.CAS_SERVER_URL, 'serviceValidate') + '?' +
            urllib.urlencode(params))
+
+    url = url.replace(r":8443", ":8443/ca-cas")
+    print('*** > django_cas > url', url)
 
     page = urllib.urlopen(url, data='')
 
