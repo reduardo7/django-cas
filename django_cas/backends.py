@@ -24,7 +24,6 @@ def _verify_cas1(ticket, service):
            urllib.urlencode(params))
 
     url = url.replace(r":8443", ":8443/ca-cas")
-    print('*** > django_cas > url', url)
 
     page = urllib.urlopen(url, data='')
     try:
@@ -57,7 +56,6 @@ def _verify_cas2(ticket, service):
            urllib.urlencode(params))
 
     url = url.replace(r":8443", ":8443/ca-cas")
-    print('*** > django_cas > url', url)
 
     page = urllib.urlopen(url, data='')
     response = page.read()
@@ -101,7 +99,6 @@ def verify_proxy_ticket(ticket, service):
            urllib.urlencode(params))
 
     url = url.replace(r":8443", ":8443/ca-cas")
-    print('*** > django_cas > url', url)
 
     page = urllib.urlopen(url, data='')
 
