@@ -20,8 +20,8 @@ def _verify_cas1(ticket, service):
 
     params = {'ticket': ticket, 'service': service}
     url = (urljoin(settings.CAS_SERVER_URL, 'validate') + '?' +
-           urlencode(params))
-    page = urlopen(url)
+           urllib.urlencode(params))
+    page = urllib.urlopen(url, data='')
     try:
         verified = page.readline().strip()
         if verified == 'yes':
@@ -48,10 +48,10 @@ def _verify_cas2(ticket, service):
     else:
         params = {'ticket': ticket, 'service': service}
 
-    url = (urljoin(settings.CAS_SERVER_URL, 'proxyValidate') + '?' +
+    url = (urljoin(settings.CAS_SERVER_URL, 'serviceValidate') + '?' +
            urllib.urlencode(params))
 
-    page = urllib.urlopen(url)
+    page = urllib.urlopen(url, data='')
     response = page.read()
     tree = ElementTree.fromstring(response)
     page.close()
@@ -89,10 +89,10 @@ def verify_proxy_ticket(ticket, service):
 
     params = {'ticket': ticket, 'service': service}
 
-    url = (urljoin(settings.CAS_SERVER_URL, 'proxyValidate') + '?' +
-           urlencode(params))
+    url = (urljoin(settings.CAS_SERVER_URL, 'serviceValidate') + '?' +
+           urllib.urlencode(params))
 
-    page = urlopen(url)
+    page = urllib.urlopen(url, data='')
 
     try:
         response = page.read()
