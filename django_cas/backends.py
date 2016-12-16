@@ -1,6 +1,7 @@
 """CAS authentication backend"""
 
 import urllib
+import ssl
 from urlparse import urljoin
 
 from django.conf import settings
@@ -10,7 +11,7 @@ from django_cas import CAS
 
 __all__ = ['CASBackend']
 
-
+ssl._create_default_https_context = ssl._create_unverified_context
 
 def _verify_cas1(ticket, service):
     """Verifies CAS 1.0 authentication ticket.
